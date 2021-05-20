@@ -7,4 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
+    protected $fillable = [
+        'name'
+    ];
+
+    /**
+     * Get the workshops for the event.
+    */
+    public function workshops()
+    {
+        return $this->hasMany(Workshop::class);
+    }
 }
