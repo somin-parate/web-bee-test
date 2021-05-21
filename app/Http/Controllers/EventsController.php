@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Workshop;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Date;
+use DB;
+use Illuminate\Support\Facades\DB as FacadesDB;
 
 class EventsController extends BaseController
 {
@@ -114,7 +117,7 @@ class EventsController extends BaseController
     Hints:
     - open the `app/Http/Controllers/EventsController` file
     - partial or not working answers also get graded so make sure you commit what you have
-    - join, whereIn, min, groupBy, havingRaw might be helpful
+    - join, whereIn, min, groupBy, + might be helpful
     - in the sample data set  the event with id 1 is already in the past and should therefore be excluded
 
     Sample response on GET /futureevents:
@@ -177,6 +180,10 @@ class EventsController extends BaseController
      */
 
     public function getFutureEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 2');
+        $callBack = function($query){
+            $query->whereDate('start', '>=', Date::now());
+        };
+        $events = Event::whereHas('workshops', $callBack)->with(['workshops' => $callBack])->get();
+        return response()->json($events, 200);
     }
 }
